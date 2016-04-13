@@ -5,6 +5,8 @@ from . import views
 app_name = 'polls'
 
 urlpatterns = [
+    url(r'^register/$', views.RegisterFormView.as_view()),
+    url(r'^login/$', views.LoginFormView.as_view()),
     url(r'^$', views.IndexView.as_view(), name='index'),
     url(r'^time/$', views.current_datetime),
     url(r'^time/plus/(\d{1,2})/$', views.hours_ahead),
