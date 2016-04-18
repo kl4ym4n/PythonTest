@@ -7,7 +7,7 @@
 <body>
 
 {% block content %}
-<form class="form-signup" action="" method="post">
+<form class="form-signup" action="/polls/register/" method="post">
     {% csrf_token %}
     <h2>Create your account</h2>
     <div class="fieldWrapper">
@@ -27,7 +27,7 @@
     </div>
     <br>
     <div class="fieldWrapper">
-    {{form.errors.values.0}}
+        {{form.errors.values.0}}
         <label>Username</label><br>
         {{ form.username }}
     </div>

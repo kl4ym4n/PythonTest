@@ -14,11 +14,11 @@ class RegistrationForm(UserCreationForm):
     # clean email field
     def clean_email(self):
         email = self.cleaned_data["email"]
-        try:
-            User._default_manager.get(email=email)
-        except User.DoesNotExist:
-            return email
-        raise forms.ValidationError('duplicate email')
+        # try:
+        #     User._default_manager.get(email=email)
+        # except User.DoesNotExist:
+        return email
+        #raise forms.ValidationError('duplicate email')
 
     # modify save() method so that we can set user.is_active to False when we first create our user
     def save(self, commit=True):

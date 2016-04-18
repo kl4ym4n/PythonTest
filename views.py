@@ -32,8 +32,8 @@ def register_user(request):
 
             username = form.cleaned_data['username']
             email = form.cleaned_data['email']
-            salt = hashlib.sha1(str(random.random())).hexdigest()[:5]
-            activation_key = hashlib.sha1(salt+email).hexdigest()
+            salt = hashlib.sha1(str(random.random()).encode('utf-8')).hexdigest()[:5]
+            activation_key = hashlib.sha1((salt+email).encode('utf-8')).hexdigest()
             key_expires = datetime.datetime.today() + datetime.timedelta(2)
 
             #Get user by username
@@ -51,11 +51,29 @@ def register_user(request):
             send_mail(email_subject, email_body, 'myemail@example.com',
                 [email], fail_silently=False)
 
-            return HttpResponseRedirect('/login')
+            return HttpResponseRedirect('/polls/login')
     else:
         args['form'] = RegistrationForm()
 
     return render_to_response('polls/register.html', args, context_instance=RequestContext(request))
+
+
+def register_confirm(request, activation_key):
+    #check if user is already logged in and if he is redirect him to some other url, e.g. home
+    if request.user.is_authenticated():
+        HttpResponseRedirect('/polls')
+
+    # check if there is UserProfile which matches the activation key (if not then display 404)
+    user_profile = get_object_or_404(UserProfile, activation_key=activation_key)
+
+    #check if the activation key has expired, if it hase then render confirm_expired.html
+    if user_profile.key_expires < timezone.now():
+        return render_to_response('polls/confirm_expired.html')
+    #if the key hasn't expired save user and set him as active and render some template to confirm activation
+    user = user_profile.user
+    user.is_active = True
+    user.save()
+    return render_to_response('polls/confirm.html')
 
 
 def login_user(request):
@@ -151,7 +169,7 @@ class RegisterFormView(FormView):
 
     # Ссылка, на которую будет перенаправляться пользователь в случае успешной регистрации.
     # В данном случае указана ссылка на страницу входа для зарегистрированных пользователей.
-    success_url = "/login/"
+    success_url = "/polls/login/"
 
     # Шаблон, который будет использоваться при отображении представления.
     template_name = "polls/register.html"
