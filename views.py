@@ -61,7 +61,7 @@ def register_user(request):
 def register_confirm(request, activation_key):
     #check if user is already logged in and if he is redirect him to some other url, e.g. home
     if request.user.is_authenticated():
-        HttpResponseRedirect('/polls')
+        HttpResponseRedirect('/polls/index')
 
     # check if there is UserProfile which matches the activation key (if not then display 404)
     user_profile = get_object_or_404(UserProfile, activation_key=activation_key)

@@ -6,6 +6,7 @@ class RegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True, widget=forms.TextInput(attrs={'placeholder': 'E-mail address'}))
     first_name = forms.CharField(required=True)
     last_name = forms.CharField(required=True)
+    status = forms.BooleanField()
 
     class Meta:
         model = User
