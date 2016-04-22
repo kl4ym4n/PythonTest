@@ -35,7 +35,7 @@ def register_user(request):
             salt = hashlib.sha1(str(random.random()).encode('utf-8')).hexdigest()[:5]
             activation_key = hashlib.sha1((salt+email).encode('utf-8')).hexdigest()
             key_expires = datetime.datetime.today() + datetime.timedelta(2)
-
+            #status =
             #Get user by username
             user = User.objects.get(username=username)
 
