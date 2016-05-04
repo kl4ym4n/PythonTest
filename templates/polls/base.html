@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+            <title>Django Link Storage</title>
+            {% load staticfiles %}
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+            <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
+            <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.2/css/bootstrap-select.min.css" />
+            <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.2/js/bootstrap-select.min.js"></script>
+            <link rel="stylesheet" type="text/css" href="{% static 'polls/css/style.css' %}"/>
+</head>
+<body>
+<div class="navbar navbar-default">
+               <div class="container">
+                   <div class="navbar-header">
+                       <a class="navbar-brand" href = "/index">Link Storage</a>
+                   </div>
+                   <ul class="nav navbar-nav">
+                       <li><a href = "/index">Home</a></li>
+                       <li><a href="/Link/PublicLinks/?page=0">Public Links</a></li>
+                       <li><a href="/User/AllUsers/?page=0">Users</a></li>
+                       <li><a href="/Link/AddLink">Add Link</a></li>
+                       <li><a href="/Link/UserLinks/?page=0">My Links</a></li>
+                       <li><a href="/Link/AllLinks/?page=0">All links</a></li>
+                       <li><a href="/User/ViewProfile">My Profile</a></li>
+                   </ul>
+                   <div class="nav navbar-nav navbar-right">
+                       <button id="logout" class="btn btn-default navbar-btn">Logout</button>
+                   </div>
+                   <div class="nav navbar-nav navbar-right">
+                       <a href="/User/Login" class="btn btn-default navbar-btn">Sign in</a>
+                       <a href="/User/Registration" class="btn btn-default navbar-btn">Registration</a>
+                   </div>
+               </div>
+            </div>
+{% block page %}
+	{% block content %}
+	{% endblock %}
+{% endblock %}
+
+<div class = "navbar navbar-default navbar-fixed-bottom">
+    <div class = "container">
+        <p class = "navbar-text">Site footer</p>
+    </div>
+</div>
+</body>
+</html>

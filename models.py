@@ -47,3 +47,5 @@ class Link(models.Model):
     user_id = models.OneToOneField(User)
     link = models.TextField()
     link_description = models.TextField()
+    creation_date = models.DateTimeField('date created')
+
