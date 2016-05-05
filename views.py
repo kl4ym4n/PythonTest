@@ -196,3 +196,6 @@ class LoginFormView(FormView):
         # Выполняем аутентификацию пользователя.
         login(self.request, self.user)
         return super(LoginFormView, self).form_valid(form)
+
+def addLinkFormView(request):
+    template_name = "polls/add_link_view.html"

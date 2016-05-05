@@ -48,4 +48,5 @@ class Link(models.Model):
     link = models.TextField()
     link_description = models.TextField()
     creation_date = models.DateTimeField('date created')
+    private_flag = models.BooleanField()
 
