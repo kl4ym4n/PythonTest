@@ -41,12 +41,16 @@ class UserProfile(models.Model):
         return self.user.username
 
     class Meta:
-        verbose_name_plural=u'User profiles'
+        verbose_name_plural = u'User profiles'
 
 class Link(models.Model):
     user_id = models.OneToOneField(User)
+    #link_title = models.TextField()
     link = models.TextField()
     link_description = models.TextField()
     creation_date = models.DateTimeField('date created')
     private_flag = models.BooleanField()
+
+    def __str__(self):
+        return self.link
 

@@ -9,7 +9,7 @@ from django.shortcuts import render_to_response
 from django.contrib.auth import authenticate, login
 import datetime, random, hashlib
 from django.core.mail import send_mail
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, CreateView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
 
@@ -197,5 +197,22 @@ class LoginFormView(FormView):
         login(self.request, self.user)
         return super(LoginFormView, self).form_valid(form)
 
-def addLinkFormView(request):
+class AddLinkView(CreateView):
     template_name = "polls/add_link_view.html"
+    model = Link
+    fields = ['user_id', 'link', 'link_description', 'creation_date', 'private_flag']
+
+def add_link(request):
+    args = {}
+    args.update(csrf(request))
+    print('add_link() is called')
+    if request.method == 'POST':
+        form = LinkForm(request.POST)
+        args['form'] = form
+        if form.is_valid():
+            form.save()  # save user to database if form is valid
+            return HttpResponseRedirect('/polls/addLink/')
+    else:
+        form = LinkForm()
+
+    return render_to_response('polls/add_link_view.html', args, context_instance=RequestContext(request))

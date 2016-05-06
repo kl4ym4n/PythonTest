@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from .models import *
 
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True, widget=forms.TextInput(attrs={'placeholder': 'E-mail address'}))
@@ -29,3 +30,16 @@ class RegistrationForm(UserCreationForm):
             user.save()
 
         return user
+
+class LinkForm(forms.Form):
+    link = forms.CharField(label='Link', widget=forms.widgets.TextInput(attrs={'placeholder': 'Link',
+                                                                  'class': 'input-block-level'}))
+
+
+    link_description = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Description',
+                                                           'rows': 8,
+                                                           'class': 'input-block-level'}))
+    private_flag = forms.BooleanField()
+    class Meta:
+        model = Link
+        fields = ('user_id', 'link', 'link_description', 'creation_date', 'private_flag')
