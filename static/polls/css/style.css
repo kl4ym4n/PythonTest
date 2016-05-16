@@ -1,3 +1,15 @@
 li a {
     color: green;
 }
+
+form {
+/*width: 500px;*/
+/*padding: 20px;*/
+    /*clear:both;*/
+    text-align:right;
+    line-height:25px;
+
+/*border: 1px solid #270644;*/
+}
+label {float:left; padding-right:10px;}
+.form_box {float:left;}

@@ -44,11 +44,11 @@ class UserProfile(models.Model):
         verbose_name_plural = u'User profiles'
 
 class Link(models.Model):
-    user_id = models.OneToOneField(User)
+    user_id = models.IntegerField(max_length=100)
     #link_title = models.TextField()
     link = models.TextField()
     link_description = models.TextField()
-    creation_date = models.DateTimeField('date created')
+    creation_date = models.DateTimeField('date created', auto_now_add=True)
     private_flag = models.BooleanField()
 
     def __str__(self):

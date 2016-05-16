@@ -197,22 +197,23 @@ class LoginFormView(FormView):
         login(self.request, self.user)
         return super(LoginFormView, self).form_valid(form)
 
-class AddLinkView(CreateView):
-    template_name = "polls/add_link_view.html"
-    model = Link
-    fields = ['user_id', 'link', 'link_description', 'creation_date', 'private_flag']
-
 def add_link(request):
     args = {}
     args.update(csrf(request))
-    print('add_link() is called')
+    #print('add_link() is called')
     if request.method == 'POST':
         form = LinkForm(request.POST)
         args['form'] = form
+        current_user = request.user
+        print (current_user.id)
         if form.is_valid():
-            form.save()  # save user to database if form is valid
+            #form.save()  # save user to database if form is valid
+            link = form.save(commit=False)
+            link.user_id = request.user.id
+            link.save()
             return HttpResponseRedirect('/polls/addLink/')
     else:
         form = LinkForm()
 
-    return render_to_response('polls/add_link_view.html', args, context_instance=RequestContext(request))
+    #return render_to_response('polls/add_link_view.html', args, context_instance=RequestContext(request))
+    return render(request, 'polls/add_link_view.html', {'form': form})
