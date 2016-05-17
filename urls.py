@@ -8,14 +8,9 @@ urlpatterns = [
     url(r'^register/$', views.register_user),
     url(r'^login/$', views.LoginFormView.as_view()),
     url(r'^addLink/$', views.add_link),
+    url(r'^PublicLinks/$', views.display_public_links),
     url(r'^confirm/(?P<activation_key>\w+)/', views.register_confirm),
     url(r'^$', views.IndexView.as_view(), name='index'),
     url(r'^time/$', views.current_datetime),
     url(r'^time/plus/(\d{1,2})/$', views.hours_ahead),
-    # ex: /polls/5/
-    url(r'^(?P<pk>[0-9]+)/$', views.DetailView.as_view(), name='detail'),
-    # ex: /polls/5/results/
-    url(r'^(?P<pk>[0-9]+)/results/$', views.ResultsView.as_view(), name='results'),
-    # ex: /polls/5/vote/
-    url(r'^(?P<question_id>[0-9]+)/vote/$', views.vote, name='vote'),
 ]

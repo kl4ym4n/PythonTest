@@ -44,7 +44,7 @@ class UserProfile(models.Model):
         verbose_name_plural = u'User profiles'
 
 class Link(models.Model):
-    user_id = models.IntegerField(max_length=100)
+    user_id = models.IntegerField()
     #link_title = models.TextField()
     link = models.TextField()
     link_description = models.TextField()
