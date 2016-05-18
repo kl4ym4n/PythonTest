@@ -19,6 +19,8 @@ from .forms import *
 from .models import *
 import hashlib, datetime, random
 from django.utils import timezone
+from django.contrib.auth import logout
+from django.shortcuts import redirect
 
 def register_user(request):
     args = {}
@@ -75,24 +77,24 @@ def register_confirm(request, activation_key):
     return render_to_response('polls/confirm.html')
 
 
-def login_user(request):
-    state = "Please log in below..."
-    username = password = ''
-    if request.POST:
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                state = "You're successfully logged in!"
-            else:
-                state = "Your account is not active, please contact the site admin."
-        else:
-            state = "Your username and/or password were incorrect."
-
-    return render_to_response('auth.html',{'state':state, 'username': username})
+# def login_user(request):
+#     state = "Please log in below..."
+#     username = password = ''
+#     if request.POST:
+#         username = request.POST.get('username')
+#         password = request.POST.get('password')
+#
+#         user = authenticate(username=username, password=password)
+#         if user is not None:
+#             if user.is_active:
+#                 login(request, user)
+#                 state = "You're successfully logged in!"
+#             else:
+#                 state = "Your account is not active, please contact the site admin."
+#         else:
+#             state = "Your username and/or password were incorrect."
+#
+#     return render_to_response('auth.html',{'state':state, 'username': username})
 
 
 class IndexView(generic.ListView):
@@ -197,4 +199,8 @@ def add_link(request):
 
 def display_public_links(request):
     public_links = Link.objects.filter(private_flag=False)
-    return render_to_response('polls/links_view.html', {'link': public_links})
+    return render(request, 'polls/links_view.html', {'link': public_links})
+
+def logout_user(request):
+    logout(request)
+    return redirect('/polls/login')

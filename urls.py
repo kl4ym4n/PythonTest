@@ -6,9 +6,10 @@ app_name = 'polls'
 
 urlpatterns = [
     url(r'^register/$', views.register_user),
-    url(r'^login/$', views.LoginFormView.as_view()),
+    url(r'^login/$', views.LoginFormView.as_view(), name='login'),
     url(r'^addLink/$', views.add_link),
-    url(r'^PublicLinks/$', views.display_public_links),
+    url(r'^logout/$', views.logout_user),
+    url(r'^publicLinks/$', views.display_public_links),
     url(r'^confirm/(?P<activation_key>\w+)/', views.register_confirm),
     url(r'^$', views.IndexView.as_view(), name='index'),
     url(r'^time/$', views.current_datetime),

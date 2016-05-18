@@ -1,51 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Registration</title>
-</head>
-<body>
+{% extends 'polls/base.html' %}
 
-{% block content %}
-<form class="form-signup" action="/polls/register/" method="post">
-    {% csrf_token %}
-    <h2>Create your account</h2>
-    <div class="fieldWrapper">
-        <label>First name</label><br>
-        {{ form.first_name }}
-    </div>
-    <br>
-    <div class="fieldWrapper">
-        <label>Last name</label><br>
-        {{ form.last_name }}
-    </div>
-    <br>
-    <div class="fieldWrapper">
-        {{ form.email.errors }}
-        <label>E-mail</label><br>
-        {{ form.email }}
-    </div>
-    <br>
-    <div class="fieldWrapper">
-        {{form.errors.values.0}}
-        <label>Username</label><br>
-        {{ form.username }}
-    </div>
-    <br>
-    <div class="fieldWrapper">
-        {{form.errors.values.1}}
-        <label>Password</label><br>
-        {{ form.password1 }}
-    </div>
-    <br>
-    <div class="fieldWrapper">
-        <label>Password again</label><br>
-        {{ form.password2 }}
-    </div>
-    <br>
-    <input type="submit" name="submit" class="btn btn-primary" value="Create account">
-</form>
-
+{% block page %}
+<div class="container">
+        <legend>Registration page</legend>
+        <form class="form-signup" action="/polls/register/" method="post">
+            {% csrf_token %}
+            <h2>Create your account</h2>
+            <div class="fieldWrapper">
+                <label>First name</label><br>
+                {{ form.first_name }}
+            </div>
+            <br>
+            <div class="fieldWrapper">
+                <label>Last name</label><br>
+                {{ form.last_name }}
+            </div>
+            <br>
+            <div class="fieldWrapper">
+                {{ form.email.errors }}
+                <label>E-mail</label><br>
+                {{ form.email }}
+            </div>
+            <br>
+            <div class="fieldWrapper">
+                {{form.errors.values.0}}
+                <label>Username</label><br>
+                {{ form.username }}
+            </div>
+            <br>
+            <div class="fieldWrapper">
+                {{form.errors.values.1}}
+                <label>Password</label><br>
+                {{ form.password1 }}
+            </div>
+            <br>
+            <div class="fieldWrapper">
+                <label>Password again</label><br>
+                {{ form.password2 }}
+            </div>
+            <br>
+            <input type="submit" name="submit" class="btn btn-primary" value="Create account">
+        </form>
+</div>
 {% endblock %}
-</body>
-</html>
