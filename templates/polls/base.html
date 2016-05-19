@@ -23,11 +23,11 @@
                    <ul class="nav navbar-nav">
                        <li><a href = "/polls">Home</a></li>
                        <li><a href="/polls/publicLinks">Public Links</a></li>
-                       <li><a href="/User/AllUsers/?page=0">Users</a></li>
+                       <li><a href="/polls/usersList">Users</a></li>
                        <li><a href="/polls/addLink">Add Link</a></li>
-                       <li><a href="/Link/UserLinks/?page=0">My Links</a></li>
-                       <li><a href="/Link/AllLinks/?page=0">All links</a></li>
-                       <li><a href="/User/ViewProfile">My Profile</a></li>
+                       <li><a href="/polls/userLinks">My Links</a></li>
+                       <li><a href="/polls/allLinks">All links</a></li>
+                       <li><a href="/polls/userProfile">My Profile</a></li>
                    </ul>
                    {% if user.is_authenticated %}
                    <div class="nav navbar-nav navbar-right">

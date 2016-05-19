@@ -1,0 +1,43 @@
+{% extends 'polls/base.html' %}
+
+{% block page %}
+<div class="container">
+    <fieldset>
+
+            <legend>Profile</legend>
+
+                    <div class="control-group">
+                        <label class="control-label">Login:</label>
+                        {% for i in profile %}
+                            <span class="inline">{{ i.username }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Name:</label>
+                        {% for i in profile %}
+                            <span class="inline">{{ i.first_name }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Surname:</label>
+                             {% for i in profile %}
+                                <span class="inline">{{ i.last_name }}</span>
+                            {% endfor %}
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Email:</label>
+                             {% for i in profile %}
+                                <span class="inline">{{ i.email }}</span>
+                            {% endfor %}
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Active status:</label>
+                             {% for i in profile %}
+                                <span class="inline">{{ i.is_active }}</span>
+                            {% endfor %}
+                    </div>
+    </fieldset>
+
+</div>
+
+{% endblock %}

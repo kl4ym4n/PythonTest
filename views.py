@@ -21,6 +21,7 @@ import hashlib, datetime, random
 from django.utils import timezone
 from django.contrib.auth import logout
 from django.shortcuts import redirect
+from django.contrib.auth.admin import UserAdmin
 
 def register_user(request):
     args = {}
@@ -200,6 +201,23 @@ def add_link(request):
 def display_public_links(request):
     public_links = Link.objects.filter(private_flag=False)
     return render(request, 'polls/links_view.html', {'link': public_links})
+
+def display_all_links(request):
+    all_links = Link.objects.all()
+    return render(request, 'polls/links_view.html', {'link': all_links})
+
+def display_user_list(request):
+    users = User.objects.all()
+    return render(request, 'polls/user_list_view.html', {'users': users})
+
+def display_current_user_links(request):
+    user_links = Link.objects.filter(user_id=request.user.id)
+    return render(request, 'polls/links_view.html', {'link': user_links})
+
+def display_user_profile(request):
+    fields = User._meta.get_fields()
+    user_info = User.objects.filter(id=request.user.id)
+    return render(request, 'polls/profile_view.html', {'fields': fields, 'profile': user_info})
 
 def logout_user(request):
     logout(request)
