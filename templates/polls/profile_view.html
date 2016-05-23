@@ -8,34 +8,30 @@
 
                     <div class="control-group">
                         <label class="control-label">Login:</label>
-                        {% for i in profile %}
-                            <span class="inline">{{ i.username }}</span>
-                        {% endfor %}
+                            <span class="inline">{{ profile.0.username }}</span>
                     </div>
                     <div class="control-group">
                         <label class="control-label">Name:</label>
-                        {% for i in profile %}
-                            <span class="inline">{{ i.first_name }}</span>
-                        {% endfor %}
+                            <span class="inline">{{ profile.0.first_name|default:"empty" }}</span>
                     </div>
                     <div class="control-group">
                         <label class="control-label">Surname:</label>
-                             {% for i in profile %}
-                                <span class="inline">{{ i.last_name }}</span>
-                            {% endfor %}
+                                <span class="inline">{{ profile.0.last_name|default:"empty" }}</span>
                     </div>
                     <div class="control-group">
                         <label class="control-label">Email:</label>
-                             {% for i in profile %}
-                                <span class="inline">{{ i.email }}</span>
-                            {% endfor %}
+                                <span class="inline">{{ profile.0.email }}</span>
                     </div>
                     <div class="control-group">
                         <label class="control-label">Active status:</label>
-                             {% for i in profile %}
-                                <span class="inline">{{ i.is_active }}</span>
-                            {% endfor %}
+                                <span class="inline">{{ profile.0.is_active }}</span>
                     </div>
+        <div class="control-group">
+                <label class="control-label"></label>
+                <div class="controls">
+                <a href="/polls/editUserProfile/" class="btn btn-primary">Edit Profile</a>
+                </div>
+        </div>
     </fieldset>
 
 </div>

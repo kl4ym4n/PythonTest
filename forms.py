@@ -44,3 +44,9 @@ class LinkForm(ModelForm):
     class Meta:
         model = Link
         fields = ('link', 'link_description', 'private_flag')
+
+class UserProfileForm(ModelForm):
+    login = forms.CharField(label='Login:', widget=forms.widgets.TextInput())
+    name = forms.CharField(label='Name:', widget=forms.widgets.TextInput())
+    surname = forms.CharField(label='Surname:', widget=forms.widgets.TextInput())
+    mail = forms.CharField(label='Email:', widget=forms.widgets.TextInput())

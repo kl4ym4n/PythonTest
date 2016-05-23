@@ -14,6 +14,7 @@ urlpatterns = [
     url(r'^userLinks/$', views.display_current_user_links),
     url(r'^usersList/$', views.display_user_list),
     url(r'^userProfile/$', views.display_user_profile),
+    url(r'^editUserProfile/$', views.display_edit_user_profile),
     url(r'^confirm/(?P<activation_key>\w+)/', views.register_confirm),
     url(r'^$', views.IndexView.as_view(), name='index'),
     url(r'^time/$', views.current_datetime),
