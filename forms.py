@@ -1,9 +1,7 @@
-from django import forms
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.forms import ModelForm
-
 from .models import *
+
 
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True, widget=forms.TextInput(attrs={'placeholder': 'E-mail address'}))
@@ -21,7 +19,7 @@ class RegistrationForm(UserCreationForm):
         #     User._default_manager.get(email=email)
         # except User.DoesNotExist:
         return email
-        #raise forms.ValidationError('duplicate email')
+        # raise forms.ValidationError('duplicate email')
 
     # modify save() method so that we can set user.is_active to False when we first create our user
     def save(self, commit=True):
@@ -33,20 +31,31 @@ class RegistrationForm(UserCreationForm):
 
         return user
 
+
 class LinkForm(ModelForm):
     link = forms.CharField(label='Link', widget=forms.widgets.TextInput(attrs={'placeholder': 'Link',
-                                                                  'class': 'input-block-level'}))
-
+                                                                               'class': 'input-block-level'}))
 
     link_description = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Description',
-                                                           'class': 'input-block-level'}))
+                                                                    'class': 'input-block-level'}))
     private_flag = forms.BooleanField(required=False)
+
     class Meta:
         model = Link
         fields = ('link', 'link_description', 'private_flag')
 
+
 class UserProfileForm(ModelForm):
-    login = forms.CharField(label='Login:', widget=forms.widgets.TextInput())
-    name = forms.CharField(label='Name:', widget=forms.widgets.TextInput())
-    surname = forms.CharField(label='Surname:', widget=forms.widgets.TextInput())
-    mail = forms.CharField(label='Email:', widget=forms.widgets.TextInput())
+    # login = forms.CharField(label='Login:', widget=forms.widgets.TextInput())
+    # name = forms.CharField(label='Name:', widget=forms.widgets.TextInput())
+    # surname = forms.CharField(label='Surname:', widget=forms.widgets.TextInput())
+    # mail = forms.CharField(label='Email:', widget=forms.widgets.TextInput())
+    # password = forms.CharField(label='Password:', widget=forms.widgets.TextInput())
+    # status = forms.BooleanField(label='Active status:')
+    password = forms.CharField(widget=forms.PasswordInput())
+
+    class Meta:
+        model = User
+        #fields = ('login', 'name', 'surname', 'mail', 'password', 'status')
+        fields = ('username', 'first_name', 'last_name', 'email', 'is_active')
+        #fields = ('email',)

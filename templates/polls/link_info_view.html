@@ -1,0 +1,38 @@
+{% extends 'polls/base.html' %}
+
+{% block page %}
+<div class="container">
+    <fieldset>
+
+            <legend>Link Info</legend>
+
+                    <div class="control-group">
+                        <label class="control-label">User ID:</label>
+                            <span class="inline">{{ link.user_id }}</span>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Link:</label>
+                            <span class="inline">{{ link.link }}</span>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Link Description:</label>
+                                <span class="inline">{{ link.link_description }}</span>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Private Flag:</label>
+                                <span class="inline">{{ link.private_flag }}</span>
+                    </div>
+
+        {% if user.is_authenticated %}
+        <div class="control-group">
+                <label class="control-label"></label>
+                <div class="controls">
+                <a href="/polls/editLinkInfo/" class="btn btn-primary">Edit Link</a>
+                </div>
+        </div>
+        {% endif %}
+    </fieldset>
+
+</div>
+
+{% endblock %}

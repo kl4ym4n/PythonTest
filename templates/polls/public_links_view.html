@@ -10,7 +10,6 @@
                     <th>Link</th>
                     <th>Private Flag</th>
                     <th>Link Info</th>
-                    <th>Delete Link</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -21,7 +20,6 @@
                     <td>{{ i.link }}</td>
                     <td>{{ i.private_flag }}</td>
                     <td><a href="/polls/linkInfo/?linkid=" class="btn btn-primary">Link info</a></td>
-                    <td><a href="/Link/ViewPublicLink/?linkid=" class="btn btn-primary">Delete link</a></td>
                 </tr>
                 {% endfor %}
                 </tbody>

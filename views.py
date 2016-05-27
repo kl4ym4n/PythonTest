@@ -208,8 +208,9 @@ def add_link(request):
 
 
 def display_public_links(request):
+
     public_links = Link.objects.filter(private_flag=False)
-    return render(request, 'polls/links_view.html', {'link': public_links})
+    return render(request, 'polls/public_links_view.html', {'link': public_links})
 
 
 def display_all_links(request):
@@ -223,8 +224,9 @@ def display_user_list(request):
 
 
 def display_current_user_links(request):
+    user = User.objects.filter(id=request.user.id)
     user_links = Link.objects.filter(user_id=request.user.id)
-    return render(request, 'polls/links_view.html', {'link': user_links})
+    return render(request, 'polls/links_view.html', {'link': user_links, 'user': user})
 
 
 def display_user_profile(request):
@@ -232,10 +234,49 @@ def display_user_profile(request):
     user_info = User.objects.filter(id=request.user.id)
     return render(request, 'polls/profile_view.html', {'fields': fields, 'profile': user_info})
 
+
+def display_link_info(request):
+    link = Link.objects.get(id=1)
+
+    return render(request, 'polls/link_info_view.html', {'link': link})
+
+
+def display_edit_link_info(request):
+    link = Link.objects.get(id=1)
+    instance = get_object_or_404(Link, id=1)
+    if request.method == 'POST':
+        form = LinkForm(request.POST, instance=instance)
+        if form.is_valid():
+            # profile.set_password(form.password)
+            form.save(commit=False)
+            # profile.save()
+            return HttpResponseRedirect('/polls/linkInfo')
+        # args['form'] = form
+        current_user = request.user
+    else:
+        form = LinkForm(initial={'link': link.link, 'link_description': link.link_description, 'private_flag': link.private_flag})
+
+    return render(request, 'polls/edit_link_info_view.html', {'form': form})
+
+
 def display_edit_user_profile(request):
+    profile = User.objects.get(id=request.user.id)
+    instance = get_object_or_404(User, id=request.user.id)
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=instance)
+        if form.is_valid():
+            #profile.set_password(form.password)
+            form.save(commit=False)
+            #profile.save()
+            return HttpResponseRedirect('/polls/userProfile')
+        #args['form'] = form
+        current_user = request.user
+    else:
+        form = UserProfileForm(initial={'username': profile.username, 'first_name': profile.first_name, 'last_name': profile.last_name, 'email': profile.email, 'is_active': profile.is_active})
+
     fields = User._meta.get_fields()
     user_info = User.objects.filter(id=request.user.id)
-    return render(request, 'polls/profile_edit_view.html', {'fields': fields, 'profile': user_info})
+    return render(request, 'polls/profile_edit_view.html', {'fields': fields, 'profile': user_info, 'form': form})
 
 
 def logout_user(request):

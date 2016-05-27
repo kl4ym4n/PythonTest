@@ -10,6 +10,8 @@ urlpatterns = [
     url(r'^addLink/$', views.add_link),
     url(r'^logout/$', views.logout_user),
     url(r'^publicLinks/$', views.display_public_links),
+    url(r'^linkInfo/$', views.display_link_info),
+    url(r'^editLinkInfo/$', views.display_edit_link_info),
     url(r'^allLinks/$', views.display_all_links),
     url(r'^userLinks/$', views.display_current_user_links),
     url(r'^usersList/$', views.display_user_list),
