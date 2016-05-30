@@ -153,34 +153,25 @@ class ResultsView(generic.DetailView):
 class RegisterFormView(FormView):
     form_class = UserCreationForm
 
-    # Ссылка, на которую будет перенаправляться пользователь в случае успешной регистрации.
-    # В данном случае указана ссылка на страницу входа для зарегистрированных пользователей.
     success_url = "/polls/login/"
 
-    # Шаблон, который будет использоваться при отображении представления.
+
     template_name = "polls/register.html"
 
     def form_valid(self, form):
-        # Создаём пользователя, если данные в форму были введены корректно.
         form.save()
-        # Вызываем метод базового класса
         return super(RegisterFormView, self).form_valid(form)
 
 
 class LoginFormView(FormView):
     form_class = AuthenticationForm
 
-    # Аналогично регистрации, только используем шаблон аутентификации.
     template_name = "polls/login.html"
 
-    # В случае успеха перенаправим на главную.
     success_url = "/polls"
 
     def form_valid(self, form):
-        # Получаем объект пользователя на основе введённых в форму данных.
         self.user = form.get_user()
-
-        # Выполняем аутентификацию пользователя.
         login(self.request, self.user)
         return super(LoginFormView, self).form_valid(form)
 
@@ -208,14 +199,13 @@ def add_link(request):
 
 
 def display_public_links(request):
-
     public_links = Link.objects.filter(private_flag=False)
     return render(request, 'polls/public_links_view.html', {'link': public_links})
 
 
 def display_all_links(request):
     all_links = Link.objects.all()
-    return render(request, 'polls/links_view.html', {'link': all_links})
+    return render(request, 'polls/all_links_view.html', {'link': all_links})
 
 
 def display_user_list(request):
@@ -226,7 +216,7 @@ def display_user_list(request):
 def display_current_user_links(request):
     user = User.objects.filter(id=request.user.id)
     user_links = Link.objects.filter(user_id=request.user.id)
-    return render(request, 'polls/links_view.html', {'link': user_links, 'user': user})
+    return render(request, 'polls/user_links_view.html', {'link': user_links, 'user': user})
 
 
 def display_user_profile(request):
@@ -237,7 +227,6 @@ def display_user_profile(request):
 
 def display_link_info(request):
     link = Link.objects.get(id=1)
-
     return render(request, 'polls/link_info_view.html', {'link': link})
 
 
@@ -247,12 +236,8 @@ def display_edit_link_info(request):
     if request.method == 'POST':
         form = LinkForm(request.POST, instance=instance)
         if form.is_valid():
-            # profile.set_password(form.password)
-            form.save(commit=False)
-            # profile.save()
+            form.save()
             return HttpResponseRedirect('/polls/linkInfo')
-        # args['form'] = form
-        current_user = request.user
     else:
         form = LinkForm(initial={'link': link.link, 'link_description': link.link_description, 'private_flag': link.private_flag})
 
@@ -266,7 +251,7 @@ def display_edit_user_profile(request):
         form = UserProfileForm(request.POST, instance=instance)
         if form.is_valid():
             #profile.set_password(form.password)
-            form.save(commit=False)
+            form.save()
             #profile.save()
             return HttpResponseRedirect('/polls/userProfile')
         #args['form'] = form

@@ -13,7 +13,7 @@ urlpatterns = [
     url(r'^linkInfo/$', views.display_link_info),
     url(r'^editLinkInfo/$', views.display_edit_link_info),
     url(r'^allLinks/$', views.display_all_links),
-    url(r'^userLinks/$', views.display_current_user_links),
+    url(r'^userLinks/$', views.display_all_links),
     url(r'^usersList/$', views.display_user_list),
     url(r'^userProfile/$', views.display_user_profile),
     url(r'^editUserProfile/$', views.display_edit_user_profile),
