@@ -2,7 +2,7 @@
 
 {% block page %}
 <div class="container">
-            <legend>Public links</legend>
+            <legend>{{ view_name }}</legend>
             <table class="table">
                 <thead>
                 <tr>
@@ -10,7 +10,6 @@
                     <th>Link</th>
                     <th>Private Flag</th>
                     <th>Link Info</th>
-                    <th>Delete Link</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -20,8 +19,7 @@
                     <!--<td>{{ user.first_name }}</td>-->
                     <td>{{ i.link }}</td>
                     <td>{{ i.private_flag }}</td>
-                    <td><a href="/polls/linkInfo/?linkid=" class="btn btn-primary">Link info</a></td>
-                    <td><a href="/Link/ViewPublicLink/?linkid=" class="btn btn-primary">Delete link</a></td>
+                    <td><a href="/polls/linkInfo/{{ i.id }}" class="btn btn-primary">Link info</a></td>
                 </tr>
                 {% endfor %}
                 </tbody>

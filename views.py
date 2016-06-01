@@ -1,19 +1,13 @@
+from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.template import RequestContext
-from django.core.urlresolvers import reverse
 from django.views import generic
-
 from django.shortcuts import render_to_response
-from django.contrib.auth import authenticate, login
-import datetime, random, hashlib
-from django.core.mail import send_mail
 from django.views.generic.edit import FormView, CreateView
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
 
 from django.contrib.auth import login
-from django.contrib import auth
 from django.core.context_processors import csrf
 from .forms import *
 from .models import *
@@ -21,7 +15,6 @@ import hashlib, datetime, random
 from django.utils import timezone
 from django.contrib.auth import logout
 from django.shortcuts import redirect
-from django.contrib.auth.admin import UserAdmin
 
 
 def register_user(request):
@@ -79,26 +72,6 @@ def register_confirm(request, activation_key):
     return render_to_response('polls/confirm.html')
 
 
-# def login_user(request):
-#     state = "Please log in below..."
-#     username = password = ''
-#     if request.POST:
-#         username = request.POST.get('username')
-#         password = request.POST.get('password')
-#
-#         user = authenticate(username=username, password=password)
-#         if user is not None:
-#             if user.is_active:
-#                 login(request, user)
-#                 state = "You're successfully logged in!"
-#             else:
-#                 state = "Your account is not active, please contact the site admin."
-#         else:
-#             state = "Your username and/or password were incorrect."
-#
-#     return render_to_response('auth.html',{'state':state, 'username': username})
-
-
 class IndexView(generic.ListView):
     template_name = 'polls/index.html'
     context_object_name = 'latest_question_list'
@@ -141,10 +114,6 @@ class DetailView(generic.DetailView):
         return Question.objects.filter(pub_date__lte=timezone.now())
 
 
-# def detail(request, question_id):
-#     question = get_object_or_404(Question, pk=question_id)
-#     return render(request, 'polls/detail.html', {'question': question})
-
 class ResultsView(generic.DetailView):
     model = Question
     template_name = 'polls/results.html'
@@ -152,10 +121,7 @@ class ResultsView(generic.DetailView):
 
 class RegisterFormView(FormView):
     form_class = UserCreationForm
-
     success_url = "/polls/login/"
-
-
     template_name = "polls/register.html"
 
     def form_valid(self, form):
@@ -200,12 +166,14 @@ def add_link(request):
 
 def display_public_links(request):
     public_links = Link.objects.filter(private_flag=False)
-    return render(request, 'polls/public_links_view.html', {'link': public_links})
+    view_name = 'Public links'
+    return render(request, 'polls/links_view.html', {'link': public_links, 'view_name': view_name})
 
 
 def display_all_links(request):
     all_links = Link.objects.all()
-    return render(request, 'polls/all_links_view.html', {'link': all_links})
+    view_name = 'All links'
+    return render(request, 'polls/links_view.html', {'link': all_links, 'view_name': view_name})
 
 
 def display_user_list(request):
@@ -214,9 +182,9 @@ def display_user_list(request):
 
 
 def display_current_user_links(request):
-    user = User.objects.filter(id=request.user.id)
     user_links = Link.objects.filter(user_id=request.user.id)
-    return render(request, 'polls/user_links_view.html', {'link': user_links, 'user': user})
+    view_name = 'My links'
+    return render(request, 'polls/links_view.html', {'link': user_links, 'view_name': view_name})
 
 
 def display_user_profile(request):
@@ -225,19 +193,19 @@ def display_user_profile(request):
     return render(request, 'polls/profile_view.html', {'fields': fields, 'profile': user_info})
 
 
-def display_link_info(request):
-    link = Link.objects.get(id=1)
+def display_link_info(request, link_id):
+    link = Link.objects.get(id=link_id)
     return render(request, 'polls/link_info_view.html', {'link': link})
 
 
-def display_edit_link_info(request):
-    link = Link.objects.get(id=1)
-    instance = get_object_or_404(Link, id=1)
+def display_edit_link_info(request, link_id):
+    link = Link.objects.get(id=link_id)
+    instance = get_object_or_404(Link, id=link_id)
     if request.method == 'POST':
         form = LinkForm(request.POST, instance=instance)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect('/polls/linkInfo')
+            return HttpResponseRedirect('/polls/linkInfo/' + link_id + '/')
     else:
         form = LinkForm(initial={'link': link.link, 'link_description': link.link_description, 'private_flag': link.private_flag})
 
@@ -250,12 +218,12 @@ def display_edit_user_profile(request):
     if request.method == 'POST':
         form = UserProfileForm(request.POST, instance=instance)
         if form.is_valid():
-            #profile.set_password(form.password)
+            data = form.cleaned_data
+            password = data['password']
+            profile.set_password(password)
             form.save()
-            #profile.save()
-            return HttpResponseRedirect('/polls/userProfile')
-        #args['form'] = form
-        current_user = request.user
+            profile.save()
+            return HttpResponseRedirect('/polls/login')
     else:
         form = UserProfileForm(initial={'username': profile.username, 'first_name': profile.first_name, 'last_name': profile.last_name, 'email': profile.email, 'is_active': profile.is_active})
 
