@@ -8,23 +8,23 @@
 
                     <div class="control-group">
                         <label class="control-label">Login:</label>
-                            <span class="inline">{{ profile.0.username }}</span>
+                            <span class="inline">{{ profile.username }}</span>
                     </div>
                     <div class="control-group">
                         <label class="control-label">Name:</label>
-                            <span class="inline">{{ profile.0.first_name|default:"empty" }}</span>
+                            <span class="inline">{{ profile.first_name|default:"empty" }}</span>
                     </div>
                     <div class="control-group">
                         <label class="control-label">Surname:</label>
-                                <span class="inline">{{ profile.0.last_name|default:"empty" }}</span>
+                                <span class="inline">{{ profile.last_name|default:"empty" }}</span>
                     </div>
                     <div class="control-group">
                         <label class="control-label">Email:</label>
-                                <span class="inline">{{ profile.0.email }}</span>
+                                <span class="inline">{{ profile.email }}</span>
                     </div>
                     <div class="control-group">
                         <label class="control-label">Active status:</label>
-                                <span class="inline">{{ profile.0.is_active }}</span>
+                                <span class="inline">{{ profile.is_active }}</span>
                     </div>
         <div class="control-group">
                 <label class="control-label"></label>

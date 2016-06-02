@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^linkInfo/(\d{1,3})/$', views.display_link_info),
     url(r'^editLinkInfo/(\d{1,3})/$', views.display_edit_link_info),
     url(r'^allLinks/$', views.display_all_links),
+    url(r'^deleteLink/(\d{1,3})/$', views.delete_link),
     url(r'^userLinks/$', views.display_current_user_links),
     url(r'^usersList/$', views.display_user_list),
     url(r'^userProfile/$', views.display_user_profile),

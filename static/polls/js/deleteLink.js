@@ -1,7 +1,3 @@
-/**
- * Created by klayman on 5/18/16.
- */
-
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie != '') {
@@ -17,14 +13,13 @@ function getCookie(name) {
     }
     return cookieValue;
 }
-
 var csrftoken = getCookie('csrftoken');
+
 
 function csrfSafeMethod(method) {
     // these HTTP methods do not require CSRF protection
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
-
 $.ajaxSetup({
     beforeSend: function(xhr, settings) {
         if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
@@ -35,20 +30,32 @@ $.ajaxSetup({
 
 
 $(document).ready(function(){
-    $("#logout").click(function()
+    $("body").on('click','.delete-link-button',function()
     {
-        //alert( "Logout" );
-        $.ajax({
-            type: 'POST',
-            url: 'http://33.33.33.10:8000/polls/logout/',
-            success: function(data) {
-                alert("Success logout");
-                window.location.href = 'http://33.33.33.10:8000/polls/login'
-            },
-            error: function(xhr, desc, err) {
-                console.log(xhr);
-                console.log("Details: " + desc + "\nError:" + err);
-            }
-        }); // end ajax call
+
+        var linkID = $(this).attr('id');
+        // alert(linkID);
+        $("#confirmDialog").modal('show');
+        $("#deleteButton").click(function()
+        {
+            $.ajax({
+                type: 'POST',
+                data: {'linkid': linkID},
+                url: 'http://33.33.33.10:8000/polls/deleteLink/' + linkID + '/',
+
+                success: function (data) {
+                    alert("Delete link " + linkID);
+                    window.location.href = 'http://33.33.33.10:8000/polls/allLinks/'
+                },
+                error: function (xhr, desc, err) {
+                    console.log(xhr);
+                    console.log("Details: " + desc + "\nError:" + err);
+                }
+
+            }); // end ajax call
+            $("#confirmDialog").modal('hide');
+        });
+
+
     });
 });

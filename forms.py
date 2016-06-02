@@ -21,6 +21,14 @@ class RegistrationForm(UserCreationForm):
         return email
         # raise forms.ValidationError('duplicate email')
 
+    def clean_username(self):
+        username = self.cleaned_data["username"]
+        try:
+            User._default_manager.get(username=username)
+        except User.DoesNotExist:
+            return username
+        raise forms.ValidationError('duplicate email')
+
     # modify save() method so that we can set user.is_active to False when we first create our user
     def save(self, commit=True):
         user = super(RegistrationForm, self).save(commit=False)

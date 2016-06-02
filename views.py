@@ -6,7 +6,7 @@ from django.views import generic
 from django.shortcuts import render_to_response
 from django.views.generic.edit import FormView, CreateView
 from django.contrib.auth.forms import AuthenticationForm
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth import login
 from django.core.context_processors import csrf
 from .forms import *
@@ -164,32 +164,50 @@ def add_link(request):
     return render(request, 'polls/add_link_view.html', {'form': form})
 
 
+def pager(request, queries, num_on_page):
+    paginator = Paginator(queries, num_on_page)
+    page = request.GET.get('page')
+    try:
+        num_of_entity = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        num_of_entity = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        num_of_entity = paginator.page(paginator.num_pages)
+    return num_of_entity
+
+
 def display_public_links(request):
     public_links = Link.objects.filter(private_flag=False)
     view_name = 'Public links'
-    return render(request, 'polls/links_view.html', {'link': public_links, 'view_name': view_name})
+    links = pager(request, public_links, 5)
+    return render(request, 'polls/links_view.html', {'link': links, 'view_name': view_name})
 
 
 def display_all_links(request):
     all_links = Link.objects.all()
     view_name = 'All links'
-    return render(request, 'polls/links_view.html', {'link': all_links, 'view_name': view_name})
+    links = pager(request, all_links, 5)
+    return render(request, 'polls/links_view.html', {'link': links, 'view_name': view_name})
 
 
 def display_user_list(request):
     users = User.objects.all()
-    return render(request, 'polls/user_list_view.html', {'users': users})
+    user_list = pager(request, users, 5)
+    return render(request, 'polls/user_list_view.html', {'users': user_list})
 
 
 def display_current_user_links(request):
     user_links = Link.objects.filter(user_id=request.user.id)
     view_name = 'My links'
-    return render(request, 'polls/links_view.html', {'link': user_links, 'view_name': view_name})
+    links = pager(request, user_links, 5)
+    return render(request, 'polls/links_view.html', {'link': links, 'view_name': view_name})
 
 
 def display_user_profile(request):
     fields = User._meta.get_fields()
-    user_info = User.objects.filter(id=request.user.id)
+    user_info = User.objects.get(id=request.user.id)
     return render(request, 'polls/profile_view.html', {'fields': fields, 'profile': user_info})
 
 
@@ -230,6 +248,18 @@ def display_edit_user_profile(request):
     fields = User._meta.get_fields()
     user_info = User.objects.filter(id=request.user.id)
     return render(request, 'polls/profile_edit_view.html', {'fields': fields, 'profile': user_info, 'form': form})
+
+
+def delete_link(request, link_id):
+    link = Link.objects.get(id=link_id)
+    link.delete()
+
+
+def delete_user(request, user_id):
+    user = User.objects.get(id=user_id)
+    links = Link.objects.filter(user_id=user_id)
+    links.delete()
+    user.delete()
 
 
 def logout_user(request):
