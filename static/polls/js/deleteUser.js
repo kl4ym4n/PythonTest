@@ -1,3 +1,6 @@
+/**
+ * Created by klayman on 6/3/16.
+ */
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie != '') {
@@ -28,35 +31,28 @@ $.ajaxSetup({
     }
 });
 
-
 $(document).ready(function(){
-    $("body").on('click','.delete-link-button',function()
+    $(".delete-user-button").click(function()
     {
-
-        var linkID = $(this).attr('id');
-        // alert(linkID);
+        var userID = $(this).attr('id');
         $("#confirmDialog").modal('show');
         $("#deleteButton").click(function()
         {
             $.ajax({
                 type: 'POST',
-                data: {'linkid': linkID},
-                // url: 'http://33.33.33.10:8000/polls/usersList/',
-                url: '/polls/deleteLink/' + linkID + '/',
+                // data: {'userid': userID},
+                url: '/polls/deleteUser/' + userID + '/',
 
                 success: function (data) {
-                    alert("Delete link " + linkID);
-                    window.location.href = '/polls/allLinks/'
+                    alert("Delete user " + userID);
+                    window.location.href = '/polls/usersList/'
                 },
                 error: function (xhr, desc, err) {
                     console.log(xhr);
                     console.log("Details: " + desc + "\nError:" + err);
                 }
-
             }); // end ajax call
             $("#confirmDialog").modal('hide');
         });
-
-
     });
 });

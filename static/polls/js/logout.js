@@ -40,10 +40,10 @@ $(document).ready(function(){
         //alert( "Logout" );
         $.ajax({
             type: 'POST',
-            url: 'http://33.33.33.10:8000/polls/logout/',
+            url: '/polls/logout/',
             success: function(data) {
                 alert("Success logout");
-                window.location.href = 'http://33.33.33.10:8000/polls/login'
+                window.location.href = '/polls/login'
             },
             error: function(xhr, desc, err) {
                 console.log(xhr);

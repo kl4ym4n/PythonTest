@@ -23,11 +23,12 @@ class RegistrationForm(UserCreationForm):
 
     def clean_username(self):
         username = self.cleaned_data["username"]
+        print(username)
         try:
-            User._default_manager.get(username=username)
+            User.objects.get(username=username)
         except User.DoesNotExist:
             return username
-        raise forms.ValidationError('duplicate email')
+        raise forms.ValidationError('duplicate username')
 
     # modify save() method so that we can set user.is_active to False when we first create our user
     def save(self, commit=True):
@@ -64,6 +65,6 @@ class UserProfileForm(ModelForm):
 
     class Meta:
         model = User
-        #fields = ('login', 'name', 'surname', 'mail', 'password', 'status')
+        # fields = ('login', 'name', 'surname', 'mail', 'password', 'status')
         fields = ('username', 'first_name', 'last_name', 'email', 'is_active')
-        #fields = ('email',)
+        # fields = ('email',)

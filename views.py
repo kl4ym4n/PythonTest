@@ -1,20 +1,30 @@
+import hashlib
+import random
+from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth import login
+from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.forms import AuthenticationForm
+from django.core.context_processors import csrf
 from django.core.mail import send_mail
-from django.shortcuts import get_object_or_404, render
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
+from django.shortcuts import redirect
+from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views import generic
-from django.shortcuts import render_to_response
-from django.views.generic.edit import FormView, CreateView
-from django.contrib.auth.forms import AuthenticationForm
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.contrib.auth import login
-from django.core.context_processors import csrf
+from django.views.generic.edit import FormView
+
 from .forms import *
 from .models import *
-import hashlib, datetime, random
-from django.utils import timezone
-from django.contrib.auth import logout
-from django.shortcuts import redirect
+
+# content_type = ContentType.objects.get_for_model(User)
+# can_view_public_links = Permission(name='Can View Public Links',
+#                                    codename='can_view_public_links',
+#                                    content_type=content_type)
+# can_view_public_links.save()
 
 
 def register_user(request):
@@ -31,7 +41,6 @@ def register_user(request):
             salt = hashlib.sha1(str(random.random()).encode('utf-8')).hexdigest()[:5]
             activation_key = hashlib.sha1((salt + email).encode('utf-8')).hexdigest()
             key_expires = datetime.datetime.today() + datetime.timedelta(2)
-            # status =
             # Get user by username
             user = User.objects.get(username=username)
 
@@ -72,18 +81,21 @@ def register_confirm(request, activation_key):
     return render_to_response('polls/confirm.html')
 
 
-class IndexView(generic.ListView):
-    template_name = 'polls/index.html'
-    context_object_name = 'latest_question_list'
+def group_required(*group_names):
+    """Requires user membership in at least one of the groups passed in."""
 
-    def get_queryset(self):
-        """
-        Return the last five published questions (not including those set to be
-        published in the future).
-        """
-        return Question.objects.filter(
-            pub_date__lte=timezone.now()
-        ).order_by('-pub_date')[:5]
+    def in_groups(u):
+        if u.is_authenticated():
+            if bool(u.groups.filter(name__in=group_names)) | u.is_superuser:
+                return True
+            return False
+
+    return user_passes_test(in_groups)
+
+
+def index_view(request):
+    print(request.user.groups.all())
+    return render(request, 'polls/index.html')
 
 
 def current_datetime(request):
@@ -142,6 +154,8 @@ class LoginFormView(FormView):
         return super(LoginFormView, self).form_valid(form)
 
 
+@login_required(login_url='/polls/login/')
+@group_required('Usual Users')
 def add_link(request):
     args = {}
     args.update(csrf(request))
@@ -178,6 +192,7 @@ def pager(request, queries, num_on_page):
     return num_of_entity
 
 
+@login_required(login_url='/polls/login/')
 def display_public_links(request):
     public_links = Link.objects.filter(private_flag=False)
     view_name = 'Public links'
@@ -192,12 +207,14 @@ def display_all_links(request):
     return render(request, 'polls/links_view.html', {'link': links, 'view_name': view_name})
 
 
+@login_required(login_url='/polls/login/')
 def display_user_list(request):
     users = User.objects.all()
     user_list = pager(request, users, 5)
     return render(request, 'polls/user_list_view.html', {'users': user_list})
 
 
+@login_required(login_url='/polls/login/')
 def display_current_user_links(request):
     user_links = Link.objects.filter(user_id=request.user.id)
     view_name = 'My links'
@@ -205,17 +222,20 @@ def display_current_user_links(request):
     return render(request, 'polls/links_view.html', {'link': links, 'view_name': view_name})
 
 
+@login_required(login_url='/polls/login/')
 def display_user_profile(request):
     fields = User._meta.get_fields()
     user_info = User.objects.get(id=request.user.id)
     return render(request, 'polls/profile_view.html', {'fields': fields, 'profile': user_info})
 
 
+@login_required(login_url='/polls/login/')
 def display_link_info(request, link_id):
     link = Link.objects.get(id=link_id)
     return render(request, 'polls/link_info_view.html', {'link': link})
 
 
+@login_required(login_url='/polls/login/')
 def display_edit_link_info(request, link_id):
     link = Link.objects.get(id=link_id)
     instance = get_object_or_404(Link, id=link_id)
@@ -225,11 +245,13 @@ def display_edit_link_info(request, link_id):
             form.save()
             return HttpResponseRedirect('/polls/linkInfo/' + link_id + '/')
     else:
-        form = LinkForm(initial={'link': link.link, 'link_description': link.link_description, 'private_flag': link.private_flag})
+        form = LinkForm(
+            initial={'link': link.link, 'link_description': link.link_description, 'private_flag': link.private_flag})
 
     return render(request, 'polls/edit_link_info_view.html', {'form': form})
 
 
+@login_required(login_url='/polls/login/')
 def display_edit_user_profile(request):
     profile = User.objects.get(id=request.user.id)
     instance = get_object_or_404(User, id=request.user.id)
@@ -243,25 +265,36 @@ def display_edit_user_profile(request):
             profile.save()
             return HttpResponseRedirect('/polls/login')
     else:
-        form = UserProfileForm(initial={'username': profile.username, 'first_name': profile.first_name, 'last_name': profile.last_name, 'email': profile.email, 'is_active': profile.is_active})
+        form = UserProfileForm(
+            initial={'username': profile.username, 'first_name': profile.first_name, 'last_name': profile.last_name,
+                     'email': profile.email, 'is_active': profile.is_active})
 
     fields = User._meta.get_fields()
     user_info = User.objects.filter(id=request.user.id)
     return render(request, 'polls/profile_edit_view.html', {'fields': fields, 'profile': user_info, 'form': form})
 
 
+@login_required(login_url='/polls/login/')
 def delete_link(request, link_id):
     link = Link.objects.get(id=link_id)
     link.delete()
+    return HttpResponseRedirect('/polls/allLinks')
 
 
+@login_required(login_url='/polls/login/')
 def delete_user(request, user_id):
     user = User.objects.get(id=user_id)
     links = Link.objects.filter(user_id=user_id)
     links.delete()
     user.delete()
+    return HttpResponseRedirect('/polls/userList')
 
 
+@login_required(login_url='/polls/login/')
 def logout_user(request):
     logout(request)
     return redirect('/polls/login')
+
+
+def display_403_page(request):
+    return render_to_response('polls/403_view.html')
