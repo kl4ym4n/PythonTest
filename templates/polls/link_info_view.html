@@ -25,13 +25,15 @@
 
 
         {% if user.is_authenticated %}
-        <div class="control-group">
+            {% if mine or perms.polls.can_edit_all_links %}
+                <div class="control-group">
                 <label class="control-label"></label>
                 <div class="controls">
                 <a href="/polls/editLinkInfo/{{ link.id }}/" class="btn btn-primary">Edit Link</a>
                     <button class="btn btn-primary delete-link-button" id='{{ link.id }}' name = "deletelinkbutton">Delete link</button>
                 </div>
-        </div>
+                </div>
+                {% endif %}
         {% endif %}
     </fieldset>
 

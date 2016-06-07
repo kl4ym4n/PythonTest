@@ -24,7 +24,7 @@
                     <td>{{ i.first_name }}</td>
                     <td>{{ i.email }}</td>
                     <td>{{ i.is_active }}</td>
-                    <td><a href="/polls/editUserProfile/?userid=''" class="btn btn-primary">Edit User</a></td>
+                    <td><a href="/polls/editUserProfile/{{ i.id }}/" class="btn btn-primary">Edit User</a></td>
                     <td><button id='{{ i.id }}' class="btn btn-primary delete-user-button">Delete User</button></td>
                 </tr>
                 {% endfor %}

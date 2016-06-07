@@ -12,15 +12,6 @@ class RegistrationForm(UserCreationForm):
         model = User
         fields = ('first_name', 'last_name', 'email', 'username', 'password1', 'password2')
 
-    # clean email field
-    def clean_email(self):
-        email = self.cleaned_data["email"]
-        # try:
-        #     User._default_manager.get(email=email)
-        # except User.DoesNotExist:
-        return email
-        # raise forms.ValidationError('duplicate email')
-
     def clean_username(self):
         username = self.cleaned_data["username"]
         print(username)
@@ -62,6 +53,7 @@ class UserProfileForm(ModelForm):
     # password = forms.CharField(label='Password:', widget=forms.widgets.TextInput())
     # status = forms.BooleanField(label='Active status:')
     password = forms.CharField(widget=forms.PasswordInput())
+    username = forms.CharField(disabled=True)
 
     class Meta:
         model = User

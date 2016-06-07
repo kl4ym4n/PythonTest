@@ -20,7 +20,7 @@ from django.views.generic.edit import FormView
 from .forms import *
 from .models import *
 
-# content_type = ContentType.objects.get_for_model(User)
+# content_type_user = ContentType.objects.get_for_model(User)
 # can_view_public_links = Permission(name='Can View Public Links',
 #                                    codename='can_view_public_links',
 #                                    content_type=content_type)
@@ -47,7 +47,8 @@ def register_user(request):
             # Create and save user profile
             new_profile = UserProfile(user=user, activation_key=activation_key, key_expires=key_expires)
             new_profile.save()
-
+            default_group = Group.objects.get(name='Usual Users')
+            user.groups.add(default_group)
             # Send email with activation key
             email_subject = 'Account confirmation'
             email_body = "Hey %s, thanks for signing up. To activate your account, click this link within \
@@ -71,7 +72,7 @@ def register_confirm(request, activation_key):
     # check if there is UserProfile which matches the activation key (if not then display 404)
     user_profile = get_object_or_404(UserProfile, activation_key=activation_key)
 
-    # check if the activation key has expired, if it hase then render confirm_expired.html
+    # check if the activation key has expired, if it has then render confirm_expired.html
     if user_profile.key_expires < timezone.now():
         return render_to_response('polls/confirm_expired.html')
     # if the key hasn't expired save user and set him as active and render some template to confirm activation
@@ -90,11 +91,11 @@ def group_required(*group_names):
                 return True
             return False
 
-    return user_passes_test(in_groups)
+    return user_passes_test(in_groups, '/polls/403/')
 
 
 def index_view(request):
-    print(request.user.groups.all())
+    # print(request.user.groups.all())
     return render(request, 'polls/index.html')
 
 
@@ -113,22 +114,6 @@ def hours_ahead(request, offset):
     # assert False
     html = "<html><body>In %s hour(s), it will be %s.</body></html>" % (offset, dt)
     return HttpResponse(html)
-
-
-class DetailView(generic.DetailView):
-    model = Question
-    template_name = 'polls/detail.html'
-
-    def get_queryset(self):
-        """
-        Excludes any questions that aren't published yet.
-        """
-        return Question.objects.filter(pub_date__lte=timezone.now())
-
-
-class ResultsView(generic.DetailView):
-    model = Question
-    template_name = 'polls/results.html'
 
 
 class RegisterFormView(FormView):
@@ -164,7 +149,7 @@ def add_link(request):
         form = LinkForm(request.POST)
         args['form'] = form
         current_user = request.user
-        print (current_user.id)
+        # print(current_user.id)
         if form.is_valid():
             # form.save()  # save user to database if form is valid
             link = form.save(commit=False)
@@ -192,7 +177,6 @@ def pager(request, queries, num_on_page):
     return num_of_entity
 
 
-@login_required(login_url='/polls/login/')
 def display_public_links(request):
     public_links = Link.objects.filter(private_flag=False)
     view_name = 'Public links'
@@ -200,6 +184,8 @@ def display_public_links(request):
     return render(request, 'polls/links_view.html', {'link': links, 'view_name': view_name})
 
 
+@login_required(login_url='/polls/login/')
+@group_required('Editor Users')
 def display_all_links(request):
     all_links = Link.objects.all()
     view_name = 'All links'
@@ -208,6 +194,7 @@ def display_all_links(request):
 
 
 @login_required(login_url='/polls/login/')
+@group_required('Admin Users')
 def display_user_list(request):
     users = User.objects.all()
     user_list = pager(request, users, 5)
@@ -215,6 +202,7 @@ def display_user_list(request):
 
 
 @login_required(login_url='/polls/login/')
+@group_required('Usual Users')
 def display_current_user_links(request):
     user_links = Link.objects.filter(user_id=request.user.id)
     view_name = 'My links'
@@ -223,6 +211,7 @@ def display_current_user_links(request):
 
 
 @login_required(login_url='/polls/login/')
+@group_required('Usual Users')
 def display_user_profile(request):
     fields = User._meta.get_fields()
     user_info = User.objects.get(id=request.user.id)
@@ -230,12 +219,19 @@ def display_user_profile(request):
 
 
 @login_required(login_url='/polls/login/')
+@group_required('Usual Users')
 def display_link_info(request, link_id):
     link = Link.objects.get(id=link_id)
-    return render(request, 'polls/link_info_view.html', {'link': link})
+    if request.user.id != link.user_id:
+            is_mine = False
+    else:
+        is_mine = True
+
+    return render(request, 'polls/link_info_view.html', {'link': link, 'mine': is_mine})
 
 
 @login_required(login_url='/polls/login/')
+@group_required('Usual Users')
 def display_edit_link_info(request, link_id):
     link = Link.objects.get(id=link_id)
     instance = get_object_or_404(Link, id=link_id)
@@ -252,9 +248,10 @@ def display_edit_link_info(request, link_id):
 
 
 @login_required(login_url='/polls/login/')
-def display_edit_user_profile(request):
-    profile = User.objects.get(id=request.user.id)
-    instance = get_object_or_404(User, id=request.user.id)
+@group_required('Usual Users')
+def display_edit_user_profile(request, user_id):
+    profile = User.objects.get(id=user_id)
+    instance = get_object_or_404(User, id=user_id)
     if request.method == 'POST':
         form = UserProfileForm(request.POST, instance=instance)
         if form.is_valid():
@@ -275,19 +272,31 @@ def display_edit_user_profile(request):
 
 
 @login_required(login_url='/polls/login/')
+@group_required('Usual Users')
 def delete_link(request, link_id):
     link = Link.objects.get(id=link_id)
-    link.delete()
-    return HttpResponseRedirect('/polls/allLinks')
+    if request.user.id != link.user_id:
+        is_mine = False
+    else:
+        is_mine = True
+    if is_mine or request.user.has_perm('polls.can_delete_all_links'):
+        link.delete()
+        return HttpResponseRedirect('/polls/publicLinks')
+    else:
+        return redirect('/polls/403/')
 
 
 @login_required(login_url='/polls/login/')
+@group_required('Admin Users')
 def delete_user(request, user_id):
     user = User.objects.get(id=user_id)
     links = Link.objects.filter(user_id=user_id)
-    links.delete()
-    user.delete()
-    return HttpResponseRedirect('/polls/userList')
+    if request.user.has_perm('polls.can_delete_all_users'):
+        links.delete()
+        user.delete()
+        return HttpResponseRedirect('/polls/userList')
+    else:
+        return redirect('/polls/403/')
 
 
 @login_required(login_url='/polls/login/')
