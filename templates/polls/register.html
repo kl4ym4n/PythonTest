@@ -5,13 +5,17 @@
         <legend>Registration page</legend>
         <form class="form-signup" action="/polls/register/" method="post">
             {% csrf_token %}
+            {{ form.non_field_errors }}
             <h2>Create your account</h2>
+{#            {{ form.as_p }}#}
             <div class="fieldWrapper">
+                {{ form.last_name.errors }}
                 <label>First name</label><br>
                 {{ form.first_name }}
             </div>
             <br>
             <div class="fieldWrapper">
+                {{ form.last_name.errors }}
                 <label>Last name</label><br>
                 {{ form.last_name }}
             </div>
@@ -23,18 +27,19 @@
             </div>
             <br>
             <div class="fieldWrapper">
-                {{form.errors.values.0}}
+                {{form.username.errors}}
                 <label>Username</label><br>
                 {{ form.username }}
             </div>
             <br>
             <div class="fieldWrapper">
-                {{form.errors.values.1}}
+                {{form.password1.errors}}
                 <label>Password</label><br>
                 {{ form.password1 }}
             </div>
             <br>
             <div class="fieldWrapper">
+                {{form.password2.errors}}
                 <label>Password again</label><br>
                 {{ form.password2 }}
             </div>

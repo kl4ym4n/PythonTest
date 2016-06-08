@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.forms import ModelForm
-from .models import *
+from .split_models import *
 
 
 class RegistrationForm(UserCreationForm):
@@ -57,6 +57,4 @@ class UserProfileForm(ModelForm):
 
     class Meta:
         model = User
-        # fields = ('login', 'name', 'surname', 'mail', 'password', 'status')
         fields = ('username', 'first_name', 'last_name', 'email', 'is_active')
-        # fields = ('email',)
